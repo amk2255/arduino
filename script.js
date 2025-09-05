@@ -1,17 +1,34 @@
-// script.js
-
 // Инициализация Blockly
-let workspace;
+let workspace = null;
 
-// Функция для создания рабочей области
+// Функция инициализации редактора
 function initBlockly() {
-    // Создаем Toolbox с категориями блоков
+    // Создание workspace
     const toolbox = {
-        kind: "categoryToolbox",
+        kind: "flyoutToolbox",
         contents: [
             {
                 kind: "category",
-                name: "Ввод/вывод",
+                name: "Основные",
+                colour: "#5b80a5",
+                contents: [
+                    {
+                        kind: "block",
+                        type: "controls_if"
+                    },
+                    {
+                        kind: "block",
+                        type: "controls_whileUntil"
+                    },
+                    {
+                        kind: "block",
+                        type: "controls_delay"
+                    }
+                ]
+            },
+            {
+                kind: "category",
+                name: "Ввод/Вывод",
                 colour: "#5b80a5",
                 contents: [
                     {
@@ -34,59 +51,14 @@ function initBlockly() {
             },
             {
                 kind: "category",
-                name: "Управление",
-                colour: "#5b80a5",
-                contents: [
-                    {
-                        kind: "block",
-                        type: "controls_delay"
-                    },
-                    {
-                        kind: "block",
-                        type: "controls_if"
-                    },
-                    {
-                        kind: "block",
-                        type: "controls_whileUntil"
-                    }
-                ]
-            },
-            {
-                kind: "category",
-                name: "Математика",
-                colour: "#5b80a5",
-                contents: [
-                    {
-                        kind: "block",
-                        type: "math_number"
-                    },
-                    {
-                        kind: "block",
-                        type: "math_arithmetic"
-                    },
-                    {
-                        kind: "block",
-                        type: "logic_compare"
-                    }
-                ]
-            },
-            {
-                kind: "category",
                 name: "Переменные",
                 colour: "#5b80a5",
                 custom: "VARIABLE"
-            },
-            {
-                kind: "category",
-                name: "Функции",
-                colour: "#5b80a5",
-                custom: "PROCEDURE"
             }
         ]
     };
 
-    // Инициализируем рабочую область
-    workspace = Blockly.inject('blocklyArea', {
+    workspace = Blockly.inject('blocklyDiv', {
         toolbox: toolbox,
         grid: {
             spacing: 20,
@@ -106,211 +78,10 @@ function initBlockly() {
         renderer: 'zelos'
     });
 
-    // Добавляем пользовательские блоки
+    // Добавление кастомных блоков
     addCustomBlocks();
     
-    // Обновляем код при изменении блоков
-    workspace.addChangeListener(updateCode);
-}
-
-// Добавление пользовательских блоков
-function addCustomBlocks() {
-    // Блок digitalWrite
-    Blockly.Blocks['controls_digital_write'] = {
-        init: function() {
-            this.appendValueInput("VALUE")
-                .setCheck("Number")
-                .appendField("digitalWrite pin");
-            this.appendDummyInput()
-                .appendField("to");
-            this.appendValueInput("STATE")
-                .setCheck("Boolean");
-            this.setPreviousStatement(true, null);
-            this.setNextStatement(true, null);
-            this.setColour(230);
-            this.setTooltip("Запись значения на цифровой пин");
-            this.setHelpUrl("");
-        }
-    };
-
-    // Блок digitalRead
-    Blockly.Blocks['controls_digital_read'] = {
-        init: function() {
-            this.appendValueInput("PIN")
-                .setCheck("Number")
-                .appendField("digitalRead pin");
-            this.setOutput(true, "Number");
-            this.setColour(230);
-            this.setTooltip("Чтение значения с цифрового пина");
-            this.setHelpUrl("");
-        }
-    };
-
-    // Блок analogWrite
-    Blockly.Blocks['controls_analog_write'] = {
-        init: function() {
-            this.appendValueInput("PIN")
-                .setCheck("Number")
-                .appendField("analogWrite pin");
-            this.appendValueInput("VALUE")
-                .setCheck("Number")
-                .appendField("to value");
-            this.setPreviousStatement(true, null);
-            this.setNextStatement(true, null);
-            this.setColour(230);
-            this.setTooltip("Запись аналогового значения на пин");
-            this.setHelpUrl("");
-        }
-    };
-
-    // Блок analogRead
-    Blockly.Blocks['controls_analog_read'] = {
-        init: function() {
-            this.appendValueInput("PIN")
-                .setCheck("Number")
-                .appendField("analogRead pin");
-            this.setOutput(true, "Number");
-            this.setColour(230);
-            this.setTooltip("Чтение аналогового значения с пина");
-            this.setHelpUrl("");
-        }
-    };
-
-    // Блок delay
-    Blockly.Blocks['controls_delay'] = {
-        init: function() {
-            this.appendValueInput("DURATION")
-                .setCheck("Number")
-                .appendField("delay");
-            this.appendDummyInput()
-                .appendField("milliseconds");
-            this.setPreviousStatement(true, null);
-            this.setNextStatement(true, null);
-            this.setColour(230);
-            this.setTooltip("Задержка выполнения программы");
-            this.setHelpUrl("");
-        }
-    };
-
-    // Блок if
-    Blockly.Blocks['controls_if'] = {
-        init: function() {
-            this.appendValueInput("CONDITION")
-                .setCheck("Boolean")
-                .appendField("if");
-            this.appendStatementInput("DO")
-                .appendField("then");
-            this.setPreviousStatement(true, null);
-            this.setNextStatement(true, null);
-            this.setColour(230);
-            this.setTooltip("Условное выполнение кода");
-            this.setHelpUrl("");
-        }
-    };
-
-    // Блок while
-    Blockly.Blocks['controls_whileUntil'] = {
-        init: function() {
-            this.appendValueInput("CONDITION")
-                .setCheck("Boolean")
-                .appendField("while");
-            this.appendStatementInput("DO")
-                .appendField("do");
-            this.setPreviousStatement(true, null);
-            this.setNextStatement(true, null);
-            this.setColour(230);
-            this.setTooltip("Цикл с условием");
-            this.setHelpUrl("");
-        }
-    };
-
-    // Генерация кода для пользовательских блоков
-    Blockly.Arduino['controls_digital_write'] = function(block) {
-        const pin = Blockly.Arduino.valueToCode(block, 'VALUE', Blockly.Arduino.ORDER_ATOMIC);
-        const state = Blockly.Arduino.valueToCode(block, 'STATE', Blockly.Arduino.ORDER_ATOMIC);
-        return `digitalWrite(${pin}, ${state});\n`;
-    };
-
-    Blockly.Arduino['controls_digital_read'] = function(block) {
-        const pin = Blockly.Arduino.valueToCode(block, 'PIN', Blockly.Arduino.ORDER_ATOMIC);
-        return [`digitalRead(${pin})`, Blockly.Arduino.ORDER_NONE];
-    };
-
-    Blockly.Arduino['controls_analog_write'] = function(block) {
-        const pin = Blockly.Arduino.valueToCode(block, 'PIN', Blockly.Arduino.ORDER_ATOMIC);
-        const value = Blockly.Arduino.valueToCode(block, 'VALUE', Blockly.Arduino.ORDER_ATOMIC);
-        return `analogWrite(${pin}, ${value});\n`;
-    };
-
-    Blockly.Arduino['controls_analog_read'] = function(block) {
-        const pin = Blockly.Arduino.valueToCode(block, 'PIN', Blockly.Arduino.ORDER_ATOMIC);
-        return [`analogRead(${pin})`, Blockly.Arduino.ORDER_NONE];
-    };
-
-    Blockly.Arduino['controls_delay'] = function(block) {
-        const duration = Blockly.Arduino.valueToCode(block, 'DURATION', Blockly.Arduino.ORDER_ATOMIC);
-        return `delay(${duration});\n`;
-    };
-
-    Blockly.Arduino['controls_if'] = function(block) {
-        const condition = Blockly.Arduino.valueToCode(block, 'CONDITION', Blockly.Arduino.ORDER_ATOMIC);
-        const branch = Blockly.Arduino.statementToCode(block, 'DO');
-        return `if (${condition}) {\n${branch}}\n`;
-    };
-
-    Blockly.Arduino['controls_whileUntil'] = function(block) {
-        const condition = Blockly.Arduino.valueToCode(block, 'CONDITION', Blockly.Arduino.ORDER_ATOMIC);
-        const branch = Blockly.Arduino.statementToCode(block, 'DO');
-        return `while (${condition}) {\n${branch}}\n`;
-    };
-}
-
-// Обновление кода при изменении блоков
-function updateCode(event) {
-    if (event.type === Blockly.Events.BLOCK_CREATE ||
-        event.type === Blockly.Events.BLOCK_DELETE ||
-        event.type === Blockly.Events.BLOCK_CHANGE ||
-        event.type === Blockly.Events.BLOCK_MOVE) {
-        
-        const code = Blockly.Arduino.workspaceToCode(workspace);
-        document.getElementById('codeOutput').textContent = code;
-    }
-}
-
-// Обработчики событий
-document.addEventListener('DOMContentLoaded', function() {
-    initBlockly();
-    
-    // Обработчик кнопки "Сгенерировать код"
-    document.getElementById('generateBtn').addEventListener('click', function() {
-        const code = Blockly.Arduino.workspaceToCode(workspace);
-        document.getElementById('codeOutput').textContent = code;
-    });
-    
-    // Обработчик кнопки "Очистить"
-    document.getElementById('clearBtn').addEventListener('click', function() {
-        workspace.clear();
-        document.getElementById('codeOutput').textContent = '';
-    });
-    
-    // Обработчик кнопки "Сохранить"
-    document.getElementById('saveBtn').addEventListener('click', function() {
-        const code = Blockly.Arduino.workspaceToCode(workspace);
-        const blob = new Blob([code], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'arduino_code.ino';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    });
-});
-
-// Инициализация при загрузке страницы
-window.addEventListener('load', function() {
-    // Устанавливаем начальный код
+    // Установка начального кода
     const initialCode = `void setup() {
   // put your setup code here, to run once:
 }
@@ -320,4 +91,196 @@ void loop() {
 }`;
     
     document.getElementById('codeOutput').textContent = initialCode;
+}
+
+// Добавление кастомных блоков
+function addCustomBlocks() {
+    // Блок digitalWrite
+    Blockly.Blocks['controls_digital_write'] = {
+        init: function() {
+            this.appendValueInput("PIN")
+                .setCheck("Number")
+                .appendField("digitalWrite");
+            this.appendValueInput("VALUE")
+                .setCheck(null)
+                .appendField("на пин");
+            this.setPreviousStatement(true, null);
+            this.setNextStatement(true, null);
+            this.setColour(230);
+            this.setTooltip("Запись значения на цифровой пин");
+            this.setHelpUrl("");
+        }
+    };
+
+    Blockly.Arduino['controls_digital_write'] = function(block) {
+        const pin = Blockly.Arduino.valueToCode(block, 'PIN', Blockly.Arduino.ORDER_ATOMIC);
+        const value = Blockly.Arduino.valueToCode(block, 'VALUE', Blockly.Arduino.ORDER_ATOMIC);
+        
+        return `digitalWrite(${pin}, ${value});\n`;
+    };
+
+    // Блок digitalRead
+    Blockly.Blocks['controls_digital_read'] = {
+        init: function() {
+            this.appendValueInput("PIN")
+                .setCheck("Number")
+                .appendField("digitalRead");
+            this.setOutput(true, "Number");
+            this.setColour(230);
+            this.setTooltip("Чтение значения с цифрового пина");
+            this.setHelpUrl("");
+        }
+    };
+
+    Blockly.Arduino['controls_digital_read'] = function(block) {
+        const pin = Blockly.Arduino.valueToCode(block, 'PIN', Blockly.Arduino.ORDER_ATOMIC);
+        
+        return [`digitalRead(${pin})`, Blockly.Arduino.ORDER_NONE];
+    };
+
+    // Блок analogWrite
+    Blockly.Blocks['controls_analog_write'] = {
+        init: function() {
+            this.appendValueInput("PIN")
+                .setCheck("Number")
+                .appendField("analogWrite");
+            this.appendValueInput("VALUE")
+                .setCheck(null)
+                .appendField("на пин");
+            this.setPreviousStatement(true, null);
+            this.setNextStatement(true, null);
+            this.setColour(230);
+            this.setTooltip("Запись аналогового значения на пин");
+            this.setHelpUrl("");
+        }
+    };
+
+    Blockly.Arduino['controls_analog_write'] = function(block) {
+        const pin = Blockly.Arduino.valueToCode(block, 'PIN', Blockly.Arduino.ORDER_ATOMIC);
+        const value = Blockly.Arduino.valueToCode(block, 'VALUE', Blockly.Arduino.ORDER_ATOMIC);
+        
+        return `analogWrite(${pin}, ${value});\n`;
+    };
+
+    // Блок analogRead
+    Blockly.Blocks['controls_analog_read'] = {
+        init: function() {
+            this.appendValueInput("PIN")
+                .setCheck("Number")
+                .appendField("analogRead");
+            this.setOutput(true, "Number");
+            this.setColour(230);
+            this.setTooltip("Чтение аналогового значения с пина");
+            this.setHelpUrl("");
+        }
+    };
+
+    Blockly.Arduino['controls_analog_read'] = function(block) {
+        const pin = Blockly.Arduino.valueToCode(block, 'PIN', Blockly.Arduino.ORDER_ATOMIC);
+        
+        return [`analogRead(${pin})`, Blockly.Arduino.ORDER_NONE];
+    };
+
+    // Блок delay
+    Blockly.Blocks['controls_delay'] = {
+        init: function() {
+            this.appendValueInput("TIME")
+                .setCheck("Number")
+                .appendField("delay");
+            this.setPreviousStatement(true, null);
+            this.setNextStatement(true, null);
+            this.setColour(230);
+            this.setTooltip("Задержка в миллисекундах");
+            this.setHelpUrl("");
+        }
+    };
+
+    Blockly.Arduino['controls_delay'] = function(block) {
+        const time = Blockly.Arduino.valueToCode(block, 'TIME', Blockly.Arduino.ORDER_ATOMIC);
+        
+        return `delay(${time});\n`;
+    };
+}
+
+// Генерация кода
+function generateCode() {
+    if (workspace) {
+        const code = Blockly.Arduino.workspaceToCode(workspace);
+        document.getElementById('codeOutput').textContent = 
+            `void setup() {\n  // put your setup code here, to run once:\n}\n\nvoid loop() {\n${code}}`;
+    }
+}
+
+// Очистка рабочей области
+function clearWorkspace() {
+    if (workspace) {
+        workspace.clear();
+        document.getElementById('codeOutput').textContent = 
+            `void setup() {\n  // put your setup code here, to run once:\n}\n\nvoid loop() {\n  // put your main code here, to run repeatedly:\n}`;
+    }
+}
+
+// Сохранение кода
+function saveCode() {
+    const code = document.getElementById('codeOutput').textContent;
+    const blob = new Blob([code], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'arduino_code.ino';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+// Загрузка кода
+function loadCode() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.ino,.txt';
+    
+    input.onchange = function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const content = e.target.result;
+                // Здесь можно добавить логику для загрузки кода в Blockly
+                alert('Файл загружен. Для использования в редакторе, вставьте код вручную или используйте другой способ.');
+            };
+            reader.readAsText(file);
+        }
+    };
+    
+    input.click();
+}
+
+// Обработчики событий
+document.addEventListener('DOMContentLoaded', function() {
+    initBlockly();
+    
+    document.getElementById('generateBtn').addEventListener('click', generateCode);
+    document.getElementById('clearBtn').addEventListener('click', clearWorkspace);
+    document.getElementById('saveBtn').addEventListener('click', saveCode);
+    document.getElementById('loadBtn').addEventListener('click', loadCode);
+    
+    // Обновление кода при изменении блоков
+    if (workspace) {
+        workspace.addChangeListener(function(event) {
+            if (event.type === Blockly.Events.BLOCK_CREATE ||
+                event.type === Blockly.Events.BLOCK_DELETE ||
+                event.type === Blockly.Events.BLOCK_CHANGE) {
+                generateCode();
+            }
+        });
+    }
 });
+
+// Функция для обновления кода при загрузке
+function updateCodeOnLoad() {
+    if (workspace) {
+        setTimeout(generateCode, 100);
+    }
+}
