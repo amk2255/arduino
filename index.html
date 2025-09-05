@@ -1,1 +1,32 @@
 
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arduino Block Editor</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/blockly@8.2.0/blockly.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/blockly@8.2.0/msg/ru.js"></script>
+</head>
+<body>
+    <header>
+        <div class="logo">Arduino Block Editor</div>
+        <nav>
+            <button id="runBtn">Запустить</button>
+            <button id="downloadBtn">Скачать</button>
+        </nav>
+    </header>
+
+    <main>
+        <div class="editor-container">
+            <div id="blocklyArea"></div>
+            <div id="codeArea">
+                <pre id="generatedCode"></pre>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
