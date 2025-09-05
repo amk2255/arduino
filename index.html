@@ -1,31 +1,68 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arduino Block Editor</title>
+    <title>Arduino Block Editor - Блочное программирование</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/blockly@8.2.0/blockly.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/blockly@8.2.0/msg/ru.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/blockly@10.4.0/blockly.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/blockly@10.4.0/msg/ru.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <header>
-        <div class="logo">Arduino Block Editor</div>
+        <div class="logo-container">
+            <i class="fas fa-microchip"></i>
+            <h1>Arduino Block Editor</h1>
+        </div>
         <nav>
-            <button id="runBtn">Запустить</button>
-            <button id="downloadBtn">Скачать</button>
+            <button id="runBtn" class="btn btn-primary"><i class="fas fa-play"></i> Запустить</button>
+            <button id="downloadBtn" class="btn btn-secondary"><i class="fas fa-download"></i> Скачать</button>
+            <button id="resetBtn" class="btn btn-danger"><i class="fas fa-redo"></i> Сброс</button>
         </nav>
     </header>
 
     <main>
         <div class="editor-container">
-            <div id="blocklyArea"></div>
-            <div id="codeArea">
-                <pre id="generatedCode"></pre>
+            <div class="toolbox-container">
+                <div class="toolbox-header">
+                    <h3><i class="fas fa-cube"></i> Блоки</h3>
+                </div>
+                <div id="blocklyToolbox"></div>
+            </div>
+            
+            <div class="workspace-container">
+                <div class="workspace-header">
+                    <h3><i class="fas fa-code"></i> Рабочая область</h3>
+                </div>
+                <div id="blocklyArea"></div>
+            </div>
+            
+            <div class="code-container">
+                <div class="code-header">
+                    <h3><i class="fas fa-file-code"></i> Сгенерированный код</h3>
+                    <button id="copyBtn" class="btn btn-small"><i class="fas fa-copy"></i></button>
+                </div>
+                <pre id="generatedCode" class="code-output">Код будет сгенерирован здесь...</pre>
+            </div>
+        </div>
+        
+        <div class="simulation-container">
+            <div class="simulation-header">
+                <h3><i class="fas fa-chart-line"></i> Симуляция</h3>
+            </div>
+            <div id="simulationArea">
+                <div class="simulation-placeholder">
+                    <i class="fas fa-microchip fa-3x"></i>
+                    <p>Симуляция будет отображаться здесь</p>
+                </div>
             </div>
         </div>
     </main>
+
+    <footer>
+        <p>Arduino Block Editor &copy; 2023 - Блочное программирование для Arduino</p>
+    </footer>
 
     <script src="script.js"></script>
 </body>
